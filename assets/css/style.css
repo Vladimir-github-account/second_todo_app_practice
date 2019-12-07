@@ -45,6 +45,16 @@ p.LogOut{
 
 #inputTask{
     display: none;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.invalidStyle {
+    border-color: red;
+}
+
+.validStyle {
+    border-color: green;
 }
 
 #createTaskButton{

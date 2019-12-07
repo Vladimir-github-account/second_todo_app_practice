@@ -1,6 +1,7 @@
 'use strict';
 
 const tasks = [];
+const TASK_PATTERN = /(?!^s*?$)^.+$/;
 
 const taskListElem = document.getElementById("taskList");
 const inputTaskElem = document.getElementById("inputTask");
@@ -8,6 +9,7 @@ const createTaskButtonElem = document.getElementById("createTaskButton");
 const checkIconContainerElem = document.getElementById("checkIconContainer");
 
 
+inputTaskElem.oninput = onInputHandler;
 checkIconContainerElem.addEventListener("click", onCheckIconContainerElemClick);
 let flag = false;
 function onCheckIconContainerElemClick(event) {
@@ -21,15 +23,31 @@ function onCheckIconContainerElemClick(event) {
     }
 }
 
+let isValid = false;
+function onInputHandler(event){
+    isValid = TASK_PATTERN.test(this.value);
+    if (isValid) {
+        this.classList.remove("invalidStyle");
+        this.classList.add("validStyle");
+    } else {
+        this.classList.add("invalidStyle");
+        this.classList.remove("validStyle");
+    }
+}
+
 createTaskButtonElem.addEventListener("click", onCreateTaskButtonElemClick);
 
 function onCreateTaskButtonElemClick(event) {
 
-     const {value} = inputTaskElem;
+     let {value} = inputTaskElem;
+     /*DELETING ALL BLANKS IN BEGAN AND END, DELETING SEVERAL BLANKS BETWEEN WORDS*/
+     value = value.trim().replace(/\s{2,}/g, " ")
+                         .replace(/([.!?]+)(?=\S)/g, "$1 ");
      if (value){
+        value = value[0].toUpperCase() + value.slice(1);
         tasks.push(value);
         taskListElem.prepend(createTask({
-            value: inputTaskElem.value[0].toUpperCase() + inputTaskElem.value.slice(1),
+            value,
             id:tasks.length -1
         })); // разобрать как работает ошибка при отсутствии передачи параметра
         inputTaskElem.value = "";
