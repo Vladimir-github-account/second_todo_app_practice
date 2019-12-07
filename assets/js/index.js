@@ -1,5 +1,7 @@
 'use strict';
 
+const tasks = [];
+
 const taskListElem = document.getElementById("taskList");
 const inputTaskElem = document.getElementById("inputTask");
 const createTaskButtonElem = document.getElementById("createTaskButton");
@@ -25,8 +27,12 @@ function onCreateTaskButtonElemClick(event) {
 
      const {value} = inputTaskElem;
      if (value){
-        taskListElem.prepend(createTask({value: inputTaskElem.value})); // разобрать как работает ошибка при отсутствии передачи параметра
-         inputTaskElem.value = "";
+        tasks.push(value);
+        taskListElem.prepend(createTask({
+            value: inputTaskElem.value[0].toUpperCase() + inputTaskElem.value.slice(1),
+            id:tasks.length -1
+        })); // разобрать как работает ошибка при отсутствии передачи параметра
+        inputTaskElem.value = "";
      }
 
 }
@@ -35,8 +41,11 @@ function onCreateTaskButtonElemClick(event) {
 function createTask(task) {
     const listItemElem = document.createElement("li");
     listItemElem.classList.add("taskItem");
+    listItemElem.setAttribute("id", task.id);
     listItemElem.appendChild(createLetterInTheCircleContainerElem(task));
     listItemElem.appendChild(createTaskAndDataWrapperElem(task));
+    listItemElem.appendChild(createDeleteTaskImgElem(task));
+
     return listItemElem;
 }
 
@@ -44,14 +53,42 @@ function createTaskAndDataWrapperElem(task){
     const taskAndDataWrapper = document.createElement("div");
     taskAndDataWrapper.classList.add("taskAndDataWrapper");
     taskAndDataWrapper.appendChild(createTaskTextParagraphElem(task));
+    taskAndDataWrapper.appendChild(createTaskDateParagraphElem(task));
     return taskAndDataWrapper;
 }
 
 function createTaskTextParagraphElem(task) {
     const taskTextParagraph = document.createElement("p");
-    taskTextParagraph.classList.add("taskTextParagraph");
+    taskTextParagraph.classList.add("taskText");
     taskTextParagraph.innerText = task.value;
     return taskTextParagraph;
+}
+
+function createTaskDateParagraphElem(task) {
+    const taskDateParagraph = document.createElement("p");
+    taskDateParagraph.classList.add("taskDate");
+    taskDateParagraph.innerText = `Created on ${
+        new Date().toLocaleDateString("en-US", {
+            day:'2-digit',
+            month:'2-digit',
+            year: 'numeric'
+        })}`;
+    return taskDateParagraph;
+}
+
+function createDeleteTaskImgElem(task) {
+    const deleteTaskImg = document.createElement("img");
+    deleteTaskImg.setAttribute("src", "assets/img/icons/delete.png");
+    deleteTaskImg.setAttribute("alt", "delete task");
+    deleteTaskImg.setAttribute("data-taskid", task.id); // почему мы используем data- атрибут вместо того что б передать id в обработчик
+    // deleteTaskImg.onclick = onListItemClickHandler(listItemElem);
+    deleteTaskImg.addEventListener("click", onDeleteTaskImgHandler);
+    return deleteTaskImg;
+
+}
+
+function onDeleteTaskImgHandler() {
+    document.getElementById(this.dataset.taskid).remove();
 }
 
 function createLetterInTheCircleContainerElem(task){

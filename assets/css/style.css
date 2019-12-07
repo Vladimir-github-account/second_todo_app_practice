@@ -75,19 +75,19 @@ p.LogOut{
 }
 
 .letterInTheCircle > span {
-
+    color: white;
 }
 
 .taskAndDataWrapper {
 
 }
 
-.takText {
+.taskText {
     max-width: 200px;
     box-sizing: border-box;
 }
 
-.taskData {
+.taskDate {
     margin-top: 5px;
     margin-left: 6px;
 }
